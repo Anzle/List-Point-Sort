@@ -1,51 +1,13 @@
-#ifndef SORTED_LIST_H
-#define SORTED_LIST_H
 /*
- * sorted-list.h
- */
+	Sangini Shah and Rob Williams
+	CS214 Systems Programming
+	Programming Assignment 2- Sorted List
+	
+	sorted-list.c
+*/
 
 #include <stdlib.h>
-
-/*
- * Sorted list type.  You need to fill in the type as part of your implementation.
- */
-struct SortedList
-{
-	int pos; //Don't know if we need this yet, just putting it in here for now
-	void *data;
-	struct SortedList *next;
-};
-typedef struct SortedList* SortedListPtr;
-
-
-/*
- * Iterator type for user to "walk" through the list item by item, from
- * beginning to end.  You need to fill in the type as part of your implementation.
- */
-struct SortedListIterator
-{
-	SortedListPtr *head; //Don't know if we need this either, just putting it in here for now
-	SortedListPtr *curr;
-};
-typedef struct SortedListIterator* SortedListIteratorPtr;
-
-
-/*
- * When your sorted list is used to store objects of some type, since the
- * type is opaque to you, you will need a comparator function to order
- * the objects in your sorted list.
- *
- * You can expect a comparator function to return -1 if the 1st object is
- * smaller, 0 if the two objects are equal, and 1 if the 2nd object is
- * smaller.
- *
- * Note that you are not expected to implement any comparator or destruct
- * functions.  You will be given a comparator function and a destruct
- * function when a new sorted list is created.
- */
-
-typedef int (*CompareFuncT)( void *, void * );
-typedef void (*DestructFuncT)( void * );
+#include "sorted-list.h"
 
 /*
  * SLCreate creates a new, empty sorted list.  The caller must provide
@@ -58,16 +20,18 @@ typedef void (*DestructFuncT)( void * );
  *
  * You need to fill in this function as part of your implementation.
  */
+SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
 
-SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df);
+}
 
 /*
  * SLDestroy destroys a list, freeing all dynamically allocated memory.
  *
  * You need to fill in this function as part of your implementation.
  */
-void SLDestroy(SortedListPtr list);
+void SLDestroy(SortedListPtr list){
 
+}
 
 /*
  * SLInsert inserts a given object into a sorted list, maintaining sorted
@@ -80,8 +44,9 @@ void SLDestroy(SortedListPtr list);
  * You need to fill in this function as part of your implementation.
  */
 
-int SLInsert(SortedListPtr list, void *newObj);
+int SLInsert(SortedListPtr list, void *newObj){
 
+}
 
 /*
  * SLRemove removes a given object from a sorted list.  Sorted ordering
@@ -95,8 +60,9 @@ int SLInsert(SortedListPtr list, void *newObj);
  * You need to fill in this function as part of your implementation.
  */
 
-int SLRemove(SortedListPtr list, void *newObj);
+int SLRemove(SortedListPtr list, void *newObj){
 
+}
 
 /*
  * SLCreateIterator creates an iterator object that will allow the caller
@@ -111,8 +77,9 @@ int SLRemove(SortedListPtr list, void *newObj);
  * You need to fill in this function as part of your implementation.
  */
 
-SortedListIteratorPtr SLCreateIterator(SortedListPtr list);
+SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 
+}
 
 /*
  * SLDestroyIterator destroys an iterator object that was created using
@@ -123,8 +90,9 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list);
  * You need to fill in this function as part of your implementation.
  */
 
-void SLDestroyIterator(SortedListIteratorPtr iter);
+void SLDestroyIterator(SortedListIteratorPtr iter){
 
+}
 
 /*
  * SLGetItem returns the pointer to the data associated with the
@@ -134,7 +102,9 @@ void SLDestroyIterator(SortedListIteratorPtr iter);
  * You need to fill in this function as part of your implementation.
 */
 
-void * SLGetItem( SortedListIteratorPtr iter );
+void * SLGetItem( SortedListIteratorPtr iter ){
+
+}
 
 /*
  * SLNextItem returns the pointer to the data associated with the
@@ -151,6 +121,6 @@ void * SLGetItem( SortedListIteratorPtr iter );
  * You need to fill in this function as part of your implementation.
  */
 
-void * SLNextItem(SortedListIteratorPtr iter);
+void * SLNextItem(SortedListIteratorPtr iter){
 
-#endif
+}
