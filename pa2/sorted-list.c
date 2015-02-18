@@ -21,7 +21,12 @@
  * You need to fill in this function as part of your implementation.
  */
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
+	
 	SortedListPtr list = (SortedListPtr) malloc(sizeof(SortedListPtr));
+	
+	if(cf == NULL || df == NULL || list == NULL)
+		return NULL;
+		
 	list -> comparator = cf;
 	list -> destroyer = df;
 	list -> head = NULL;
@@ -35,6 +40,17 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
  */
 void SLDestroy(SortedListPtr list){
 	
+	if(list == NULL)
+		return;
+		
+	SortedListNodePtr current = list -> head;
+	while(current != NULL) {
+		destroy(current -> data);
+		SortedListNodePtr temp = current -> next;
+		free(current);
+		current = temp;
+	}
+	free(list);
 }
 
 /*
@@ -65,7 +81,47 @@ int SLInsert(SortedListPtr list, void *newObj){
  */
 
 int SLRemove(SortedListPtr list, void *newObj){
-
+	
+	if(list == NULL)
+		return 0;
+	
+	SortedListNodePtr previous = NULL;
+	SortedListNodePtr current = list->head;
+	while(current) {
+		if(list->comparator(current->data, newObj) == 0){
+			if(previous == NULL){
+				list->head = current->next;
+				
+				if(current -> next != NULL) {
+					current->next->ref_count = current->next->ref_count + 1;
+				}
+				
+				current -> ref_count = current -> ref_count - 1;
+				if(current -> ref_count == 0){
+					list->destroyer(current->data);
+					free(current);
+				}
+				return 1;
+			}
+			else {
+				previous -> next = current -> next;
+				
+				if(current -> next != NULL) {
+					current->next->ref_count = current->next->ref_count + 1;
+				}
+				
+				current -> ref_count = current -> ref_count - 1;
+				if(current -> ref_count == 0){
+					list->destroyer(current->data);
+					free(current);
+				}
+				return 1;
+			}
+		}
+		previous = current;
+		current = current -> next;
+	}
+	return 0;
 }
 
 /*
@@ -82,6 +138,10 @@ int SLRemove(SortedListPtr list, void *newObj){
  */
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
+	
+	if(list == NULL)
+		return NULL;
+		
 	SortedListIteratorPtr iterator = (SortedListIteratorPtr) malloc(sizeof(SortedListIteratorPtr));
 	iterator -> list = list;
 	iterator -> curr = list -> head;
