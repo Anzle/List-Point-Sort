@@ -21,7 +21,11 @@
  * You need to fill in this function as part of your implementation.
  */
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
-
+	SortedListPtr list = (SortedListPtr) malloc(sizeof(SortedListPtr));
+	list -> comparator = cf;
+	list -> destroyer = df;
+	list -> head = NULL;
+	return list;
 }
 
 /*
@@ -30,7 +34,7 @@ SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
  * You need to fill in this function as part of your implementation.
  */
 void SLDestroy(SortedListPtr list){
-
+	
 }
 
 /*
@@ -78,7 +82,10 @@ int SLRemove(SortedListPtr list, void *newObj){
  */
 
 SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
-
+	SortedListIteratorPtr iterator = (SortedListIteratorPtr) malloc(sizeof(SortedListIteratorPtr));
+	iterator -> list = list;
+	iterator -> curr = list -> head;
+	return iterator;
 }
 
 /*
@@ -91,7 +98,7 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  */
 
 void SLDestroyIterator(SortedListIteratorPtr iter){
-
+	free(iter);
 }
 
 /*

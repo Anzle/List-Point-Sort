@@ -11,12 +11,22 @@
  */
 struct SortedList
 {
-	int pos; //Don't know if we need this yet, just putting it in here for now
-	void *data;
-	struct SortedList *next;
+	int (*comparator)( void *, void * ); //comparator function needed to sort nodes
+	void (*destroyer)( void * ); //destroy function needed to free data
+	struct SortedListNode *head; //pointer to the first node of the list
 };
 typedef struct SortedList* SortedListPtr;
 
+/*
+ * Sorted list node type. 	
+ */
+struct SortedListNode
+{
+	int ref_count; //keeps track of the number of PERSISTENT pointers to it
+	struct SortedListNode *next; //pointer to next node
+	void * data; //data stored
+};
+typedef struct SortedListNode* SortedListNodePtr;
 
 /*
  * Iterator type for user to "walk" through the list item by item, from
@@ -24,8 +34,8 @@ typedef struct SortedList* SortedListPtr;
  */
 struct SortedListIterator
 {
-	SortedListPtr *head; //Don't know if we need this either, just putting it in here for now
-	SortedListPtr *curr;
+	SortedListPtr list; //list being iterated
+	SortedListNodePtr curr; //current node being watched
 };
 typedef struct SortedListIterator* SortedListIteratorPtr;
 
