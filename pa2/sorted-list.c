@@ -65,7 +65,65 @@ void SLDestroy(SortedListPtr list){
  */
 
 int SLInsert(SortedListPtr list, void *newObj){
+	///create the new ListNode
+	SortedListNodePtr obj;
+	SortedListNodeptr cur,prv; //list iteration
+	int res; //the result of the compare
+	
+	if(!list || !newObj) //We done goofed, something is null
+		return 0;
 
+	//Set up the new object
+	obj = (SortedListNodePtr)malloc(sizeof(SortedListPtr));
+	if(!obj)
+		return 0; //we didn't get the allocated memory
+	
+	obj->ref_count = 1;
+	obj->data = newObj;
+	obj->next = NULL;
+	
+	
+	//If the list is empty, set this object as the head
+	if(!list->head){
+		obj->next = NULL;
+		list->head = obj;
+		return 1; //exit function
+	}
+	//Case: Larger than head
+	cur = list->head;
+	res = comparator(obj,cur);
+	if(res == 0 || res == 1){
+		obj->next = cur;
+		list->head = obj;
+		return 1;
+	}else if(!cur->next){
+		cur->next = obj;
+		return 1;
+	}
+	
+	//General Case: It is in the body of the list
+	prv = cur; 
+	cur = cur->next;
+	while(cur){
+		res = comparator(obj,cur);
+		switch(res){
+			case 1: //obj is larger than cur
+			case 0: //obj and cur are the same size, but obj before cur
+				prv->next = obj;
+				obj->next = cur;
+				return 1; //exit function
+			case -1: //obj is smaller than cur
+				if(!cur->next){ //nothing after cur? Put obj there
+					cur->next = obj;
+					return 1; //exit function
+				}
+				prv = cur;
+				cur = cur->next;
+		}//end switch	
+	}//end while
+
+	//I don't know how, but we done messed up
+	return 0;
 }
 
 /*
