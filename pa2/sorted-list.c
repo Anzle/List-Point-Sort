@@ -45,7 +45,7 @@ void SLDestroy(SortedListPtr list){
 		
 	SortedListNodePtr current = list -> head;
 	while(current != NULL) {
-		destroy(current -> data);
+		list -> destroyer(current -> data);
 		SortedListNodePtr temp = current -> next;
 		free(current);
 		current = temp;
@@ -67,7 +67,7 @@ void SLDestroy(SortedListPtr list){
 int SLInsert(SortedListPtr list, void *newObj){
 	///create the new ListNode
 	SortedListNodePtr obj;
-	SortedListNodeptr cur,prv; //list iteration
+	SortedListNodePtr cur,prv; //list iteration
 	int res; //the result of the compare
 	
 	if(!list || !newObj) //We done goofed, something is null
@@ -237,26 +237,26 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	if(!iter) //valid iterator?
 		return 0;
 	
-	if(iter->cur->ref_count == 1){ //Update the iterator if needed
+	if(iter->curr->ref_count == 1){ //Update the iterator if needed
 	
-		ret = SLSearch(iter->list, iter->cur->data); //returns the next valid iterator
+		SortedListNodePtr temp = SLSearch(iter->list, iter->curr->data); //returns the next valid iterator
 		/*Clean up the old data*/
-		iter->list->destroyer(iter->cur->data);//delete the data in cur
-		free(iter->cur);
+		iter->list->destroyer(iter->curr->data);//delete the data in cur
+		free(iter->curr);
 		
 		/*Re-establish the Iterator for the general algorithm*/
-		ret->ref_count++;
-		iter->cur = ret;	
+		temp->ref_count++;
+		iter->curr = temp;	
 	}
 	
 	/*General Case*/
-	if(iter->cur){//Still stuff left in the list?
-		ret = iter->cur->data; //set the pointer to return  the data
+	if(iter->curr){//Still stuff left in the list?
+		ret = iter->curr->data; //set the pointer to return  the data
 		
-		iter->cur->ref_count--; //since we will change the pointer
+		iter->curr->ref_count--; //since we will change the pointer
 		
-		iter->cur = iter->cur->next; //advance the iterators position
-		iter->cur->ref_count++; //increase the pointer reference
+		iter->curr = iter->curr->next; //advance the iterators position
+		iter->curr->ref_count++; //increase the pointer reference
 		return ret;
 	}
 	else //List has been iterated
@@ -283,8 +283,8 @@ void * SLNextItem(SortedListIteratorPtr iter){
 	if(!iter) //valid iterator?
 		return NULL;
 	
-	else if(iter->cur){//Still stuff left in the list?
-		ret = iter->cur->data; //set the pointer to return  the data
+	else if(iter->curr){//Still stuff left in the list?
+		void * ret = iter->curr->data; //set the pointer to return  the data
 		return ret;
 	}
 	else //List has been iterated
@@ -303,13 +303,13 @@ void * SLNextItem(SortedListIteratorPtr iter){
  * First, there was bad input
  * Seconds, there is no element <= data
  */
-void * SLSearch(SortedListPtr list, void* data){
+SortedListNodePtr SLSearch(SortedListPtr list, void* data){
 	SortedListNodePtr cur;
 	if(!list || !data)
 		return NULL; //He's dead. We failed. No Hope.
 	
 	cur = list->head;
-	while(list->comparator(current->data, data) > 0 && curr){
+	while(cur && list->comparator(cur->data, data) > 0){
 		//increment until you find something smaller than data
 		//or you run out of things
 		cur = cur->next;

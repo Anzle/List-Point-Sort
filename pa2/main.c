@@ -8,7 +8,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include "sorted-list.h"
+
 
 /*
  *	Vector struct to use in Sorted Linked List
@@ -31,7 +33,7 @@ int vector_compare(void * v1, void * v2){
 	Vector * vector1 = (Vector *) v1;
 	Vector * vector2 = (Vector *) v2;
 	
-	if((vector1 -> x == vector2 -> x && vector1 -> y == vector2 -> y) ||(sqrt(pow(vector1->x, 2) + sqrt(pow(vector1->y, 2))) == sqrt(pow(vector2->x, 2) + sqrt(pow(vector2->y, 2))))){
+	if((vector1 -> x == vector2 -> x && vector1 -> y == vector2 -> y) ||(sqrt(pow(vector1->x, 2) + pow(vector1->y, 2)) == sqrt(pow(vector2->x, 2) + pow(vector2->y, 2)))){
 		return 0;
 	}
 	else if(sqrt(pow(vector1->x, 2) + sqrt(pow(vector1->y, 2))) < sqrt(pow(vector2->x, 2) + sqrt(pow(vector2->y, 2)))){

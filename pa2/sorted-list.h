@@ -174,6 +174,6 @@ void * SLNextItem(SortedListIteratorPtr iter);
  * First, there was bad input
  * Seconds, there is no element <= data
  */
-void * SLSearch(SortedListPtr list, void* data);
+SortedListNodePtr SLSearch(SortedListPtr list, void* data);
 
 #endif
