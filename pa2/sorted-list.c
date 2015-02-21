@@ -222,6 +222,12 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  */
 
 void SLDestroyIterator(SortedListIteratorPtr iter){
+	//if the current is flagged for deletion and this is it's last pointer, destroy it
+	if(iter->cur->flag == 1 && iter->cur->ref_count == 1){
+		iter->list->destroyer(iter->cur);
+		free(iter->cur);
+	}
+	//destroy the iterator
 	free(iter);
 }
 
