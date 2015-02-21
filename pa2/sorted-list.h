@@ -25,6 +25,7 @@ struct SortedListNode
 	int ref_count; //keeps track of the number of PERSISTENT pointers to it
 	struct SortedListNode *next; //pointer to next node
 	void * data; //data stored
+	int flag; //Flag for deletion, 0 no 1 yes
 };
 typedef struct SortedListNode* SortedListNodePtr;
 

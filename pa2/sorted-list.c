@@ -79,6 +79,7 @@ int SLInsert(SortedListPtr list, void *newObj){
 		return 0; //we didn't get the allocated memory
 	
 	obj->ref_count = 1;
+	obj->flag  = 0;
 	obj->data = newObj;
 	obj->next = NULL;
 	
@@ -159,6 +160,8 @@ int SLRemove(SortedListPtr list, void *newObj){
 					list->destroyer(current->data);
 					free(current);
 				}
+				else
+					curent -> flag = 1; //flag it for deletion. This assumes it is only in one sorted list, but multiple iterators
 				return 1;
 			}
 			else {
@@ -173,6 +176,8 @@ int SLRemove(SortedListPtr list, void *newObj){
 					list->destroyer(current->data);
 					free(current);
 				}
+				else
+					curent -> flag = 1; //flag it for deletion. This assumes it is only in one sorted list, but multiple iterators
 				return 1;
 			}
 		}
@@ -237,17 +242,8 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	if(!iter) //valid iterator?
 		return 0;
 	
-	if(iter->curr->ref_count == 1){ //Update the iterator if needed
-	
-		SortedListNodePtr temp = SLSearch(iter->list, iter->curr->data); //returns the next valid iterator
-		/*Clean up the old data*/
-		iter->list->destroyer(iter->curr->data);//delete the data in cur
-		free(iter->curr);
-		
-		/*Re-establish the Iterator for the general algorithm*/
-		temp->ref_count++;
-		iter->curr = temp;	
-	}
+	if(iter->cur->flag == 1) //If the current is flagged for deletion, update the iterator
+		SLUpdateIterator(iter);
 	
 	/*General Case*/
 	if(iter->curr){//Still stuff left in the list?
@@ -282,8 +278,10 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 void * SLNextItem(SortedListIteratorPtr iter){
 	if(!iter) //valid iterator?
 		return NULL;
+	if(iter->cur->flag == 1) //If the current is flagged for deletion, update the iterator
+		SLUpdateIterator(iter);
 	
-	else if(iter->curr){//Still stuff left in the list?
+	if(iter->curr){//Still stuff left in the list?
 		void * ret = iter->curr->data; //set the pointer to return  the data
 		return ret;
 	}
@@ -316,4 +314,24 @@ SortedListNodePtr SLSearch(SortedListPtr list, void* data){
 	}
 	
 	return cur;
+}
+
+/*
+ * This function will update the given iterator in the even that an item has been
+ * removed from the list associated with the iterator. 
+ */
+SortedListNodePtr SLUpdateIterator(SortedListIteratorPtr iter){
+		if(iter->curr->flag == 1){ //Update the iterator if needed
+	
+		SortedListNodePtr temp = SLSearch(iter->list, iter->curr->data); //returns the next valid iterator
+		
+		/*Clean up the old data if needed*/
+		if(iter->cur->ref_count == 1){ //this is the last pointer to it,
+			iter->list->destroyer(iter->curr->data);//delete the data in cur
+			free(iter->curr);
+		}
+		/*Re-establish the Iterator for the general algorithm*/
+		temp->ref_count++;
+		iter->curr = temp;	
+	}
 }
