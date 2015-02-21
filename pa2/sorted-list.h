@@ -163,4 +163,17 @@ void * SLGetItem( SortedListIteratorPtr iter );
 
 void * SLNextItem(SortedListIteratorPtr iter);
 
+/*
+ * The Sorted List search function finds the next smaller (or same)item in a
+ * Sorted List. This function is not meant for the general public to use
+ * This function is called by SLGetItem in the event that someone is a jerk
+ * and removed an item from the list using SLNextItem and SLRemove
+ * 
+ * This function is certifiably awesome
+ * If this function returns NULL, then one of two things had occurred
+ * First, there was bad input
+ * Seconds, there is no element <= data
+ */
+void * SLSearch(SortedListPtr list, void* data);
+
 #endif

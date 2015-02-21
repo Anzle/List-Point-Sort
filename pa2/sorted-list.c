@@ -91,7 +91,7 @@ int SLInsert(SortedListPtr list, void *newObj){
 	}
 	//Case: Larger than head
 	cur = list->head;
-	res = comparator(obj,cur);
+	res = list->comparator(obj->data,cur->data);
 	if(res == 0 || res == 1){
 		obj->next = cur;
 		list->head = obj;
@@ -105,7 +105,7 @@ int SLInsert(SortedListPtr list, void *newObj){
 	prv = cur; 
 	cur = cur->next;
 	while(cur){
-		res = comparator(obj,cur);
+		res = list->comparator(obj->data,cur->data);
 		switch(res){
 			case 1: //obj is larger than cur
 			case 0: //obj and cur are the same size, but obj before cur
@@ -203,6 +203,7 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	SortedListIteratorPtr iterator = (SortedListIteratorPtr) malloc(sizeof(SortedListIteratorPtr));
 	iterator -> list = list;
 	iterator -> curr = list -> head;
+	iterator -> curr -> ref_count++;
 	return iterator;
 }
 
@@ -225,10 +226,42 @@ void SLDestroyIterator(SortedListIteratorPtr iter){
  * advances past the end of the sorted list.
  * 
  * You need to fill in this function as part of your implementation.
+ *
+ ** if the cur->ref_count == 1, then the current iterator is the only 
+ ** thing pointing to it and thus can be deleted with no risk.
 */
 
 void * SLGetItem( SortedListIteratorPtr iter ){
+	void* ret;
 
+	if(!iter) //valid iterator?
+		return 0;
+	
+	if(iter->cur->ref_count == 1){ //Update the iterator if needed
+	
+		ret = SLSearch(iter->list, iter->cur->data); //returns the next valid iterator
+		/*Clean up the old data*/
+		iter->list->destroyer(iter->cur->data);//delete the data in cur
+		free(iter->cur);
+		
+		/*Re-establish the Iterator for the general algorithm*/
+		ret->ref_count++;
+		iter->cur = ret;	
+	}
+	
+	/*General Case*/
+	if(iter->cur){//Still stuff left in the list?
+		ret = iter->cur->data; //set the pointer to return  the data
+		
+		iter->cur->ref_count--; //since we will change the pointer
+		
+		iter->cur = iter->cur->next; //advance the iterators position
+		iter->cur->ref_count++; //increase the pointer reference
+		return ret;
+	}
+	else //List has been iterated
+		return 0;
+		
 }
 
 /*
@@ -247,5 +280,40 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  */
 
 void * SLNextItem(SortedListIteratorPtr iter){
+	if(!iter) //valid iterator?
+		return NULL;
+	
+	else if(iter->cur){//Still stuff left in the list?
+		ret = iter->cur->data; //set the pointer to return  the data
+		return ret;
+	}
+	else //List has been iterated
+		return NULL;
+}
 
+
+/*
+ * The Sorted List search function finds the next smaller (or same)item in a
+ * Sorted List. This function is not meant for the general public to use
+ * This function is called by SLGetItem in the event that someone is a jerk
+ * and removed an item from the list using SLNextItem and SLRemove
+ * 
+ * This function is certifiably awesome
+ * If this function returns NULL, then one of two things had occurred
+ * First, there was bad input
+ * Seconds, there is no element <= data
+ */
+void * SLSearch(SortedListPtr list, void* data){
+	SortedListNodePtr cur;
+	if(!list || !data)
+		return NULL; //He's dead. We failed. No Hope.
+	
+	cur = list->head;
+	while(list->comparator(current->data, data) > 0 && curr){
+		//increment until you find something smaller than data
+		//or you run out of things
+		cur = cur->next;
+	}
+	
+	return cur;
 }
