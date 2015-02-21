@@ -7,7 +7,7 @@ libsl.a: sorted-list.o
 	ar rv libsl.a sorted-list.o
 
 main: sorted-list.o libsl.a
-	gcc -o sl main.c -L -lsl
+	gcc -o sl main.c -L -lsl -lm
 	
 clean:
 	rm libsl.a sl sorted-list.o
