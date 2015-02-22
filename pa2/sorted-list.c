@@ -161,7 +161,7 @@ int SLRemove(SortedListPtr list, void *newObj){
 					free(current);
 				}
 				else
-					curent -> flag = 1; //flag it for deletion. This assumes it is only in one sorted list, but multiple iterators
+					current -> flag = 1; //flag it for deletion. This assumes it is only in one sorted list, but multiple iterators
 				return 1;
 			}
 			else {
@@ -177,7 +177,7 @@ int SLRemove(SortedListPtr list, void *newObj){
 					free(current);
 				}
 				else
-					curent -> flag = 1; //flag it for deletion. This assumes it is only in one sorted list, but multiple iterators
+					current -> flag = 1; //flag it for deletion. This assumes it is only in one sorted list, but multiple iterators
 				return 1;
 			}
 		}
@@ -223,9 +223,9 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 
 void SLDestroyIterator(SortedListIteratorPtr iter){
 	//if the current is flagged for deletion and this is it's last pointer, destroy it
-	if(iter->cur->flag == 1 && iter->cur->ref_count == 1){
-		iter->list->destroyer(iter->cur);
-		free(iter->cur);
+	if(iter->curr->flag == 1 && iter->curr->ref_count == 1){
+		iter->list->destroyer(iter->curr);
+		free(iter->curr);
 	}
 	//destroy the iterator
 	free(iter);
@@ -248,7 +248,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	if(!iter) //valid iterator?
 		return 0;
 	
-	if(iter->cur->flag == 1) //If the current is flagged for deletion, update the iterator
+	if(iter->curr && iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
 		SLUpdateIterator(iter);
 	
 	/*General Case*/
@@ -284,7 +284,7 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 void * SLNextItem(SortedListIteratorPtr iter){
 	if(!iter) //valid iterator?
 		return NULL;
-	if(iter->cur->flag == 1) //If the current is flagged for deletion, update the iterator
+	if(iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
 		SLUpdateIterator(iter);
 	
 	if(iter->curr){//Still stuff left in the list?
@@ -332,7 +332,7 @@ SortedListNodePtr SLUpdateIterator(SortedListIteratorPtr iter){
 		SortedListNodePtr temp = SLSearch(iter->list, iter->curr->data); //returns the next valid iterator
 		
 		/*Clean up the old data if needed*/
-		if(iter->cur->ref_count == 1){ //this is the last pointer to it,
+		if(iter->curr->ref_count == 1){ //this is the last pointer to it,
 			iter->list->destroyer(iter->curr->data);//delete the data in cur
 			free(iter->curr);
 		}

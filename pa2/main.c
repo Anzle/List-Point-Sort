@@ -80,6 +80,7 @@ void int_destroy(void * i){
 
 int main(int argc, char** argv){
 	
+	printf("here");
 	//Instantiate vectors
 	Vector * v1 = (Vector *) malloc(sizeof(Vector *));
 	Vector * v2 = (Vector *) malloc(sizeof(Vector *));
@@ -96,13 +97,16 @@ int main(int argc, char** argv){
 	//Array to hold all the vectors
 	Vector *vectors[] = {v1, v2, v3, v4, v5};
 	
+	printf("here");
 	//Define function pointers
 	int (*v_compare_ptr)(void *, void *) = &vector_compare;
 	void (*v_destroy_ptr)(void *) = &vector_destroy;
 	
+	printf("here");
 	//Create Sorted List for Vectors
 	SortedListPtr vector_sl = SLCreate(v_compare_ptr, v_destroy_ptr);
 	
+	printf("here");
 	//Insert vectors into the list
 	int x;
 	for(x = 0; x < 5; x++) {
@@ -112,6 +116,14 @@ int main(int argc, char** argv){
 		}
 	}
 	
+	printf("here");
+	//Create iterator and print out list values
+	SortedListIteratorPtr vector_iter1 = SLCreateIterator(vector_sl);
+	while(SLGetItem(vector_iter1) != 0){
+		Vector * v = (Vector *) SLNextItem(vector_iter1);
+		printf("x=%d y=%d", v->x, v->y);
+	}
+	printf("here");
 	
 	
 	
