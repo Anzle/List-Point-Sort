@@ -182,6 +182,6 @@ SortedListNodePtr SLSearch(SortedListPtr list, void* data);
  * This function will update the given iterator in the even that an item has been
  * removed from the list associated with the iterator. 
  */
-SortedListNodePtr SLUpdateIterator(SortedListIteratorPtr iter);
+void SLUpdateIterator(SortedListIteratorPtr iter);
 
 #endif

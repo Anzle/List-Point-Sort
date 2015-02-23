@@ -331,7 +331,7 @@ SortedListNodePtr SLSearch(SortedListPtr list, void* data){
  * This function will update the given iterator in the even that an item has been
  * removed from the list associated with the iterator. 
  */
-SortedListNodePtr SLUpdateIterator(SortedListIteratorPtr iter){
+void SLUpdateIterator(SortedListIteratorPtr iter){
 		if(iter->curr->flag == 1){ //Update the iterator if needed
 	
 		SortedListNodePtr temp = SLSearch(iter->list, iter->curr->data); //returns the next valid iterator
