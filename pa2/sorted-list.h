@@ -9,35 +9,36 @@
 /*
  * Sorted list type.  You need to fill in the type as part of your implementation.
  */
-struct SortedList
+typedef struct SortedList
 {
 	int (*comparator)( void *, void * ); //comparator function needed to sort nodes
 	void (*destroyer)( void * ); //destroy function needed to free data
 	struct SortedListNode *head; //pointer to the first node of the list
-};
+}SortedList;
 typedef struct SortedList* SortedListPtr;
+
 
 /*
  * Sorted list node type. 	
  */
-struct SortedListNode
+typedef struct SortedListNode
 {
 	int ref_count; //keeps track of the number of PERSISTENT pointers to it
 	struct SortedListNode *next; //pointer to next node
 	void * data; //data stored
 	int flag; //Flag for deletion, 0 no 1 yes
-};
+}SortedListNode;
 typedef struct SortedListNode* SortedListNodePtr;
 
 /*
  * Iterator type for user to "walk" through the list item by item, from
  * beginning to end.  You need to fill in the type as part of your implementation.
  */
-struct SortedListIterator
+typedef struct SortedListIterator
 {
 	SortedListPtr list; //list being iterated
 	SortedListNodePtr curr; //current node being watched
-};
+}SortedListIterator;
 typedef struct SortedListIterator* SortedListIteratorPtr;
 
 

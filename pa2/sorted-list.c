@@ -22,7 +22,7 @@
  */
 SortedListPtr SLCreate(CompareFuncT cf, DestructFuncT df){
 	
-	SortedListPtr list = (SortedListPtr) malloc(sizeof(SortedListPtr));
+	SortedListPtr list = (SortedListPtr) malloc(sizeof(SortedList));
 	
 	if(cf == NULL || df == NULL || list == NULL)
 		return NULL;
@@ -74,7 +74,7 @@ int SLInsert(SortedListPtr list, void *newObj){
 		return 0;
 
 	//Set up the new object
-	obj = (SortedListNodePtr)malloc(sizeof(SortedListPtr));
+	obj = (SortedListNodePtr)malloc(sizeof(SortedListNode));
 	if(!obj)
 		return 0; //we didn't get the allocated memory
 	
@@ -205,7 +205,7 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	if(list == NULL)
 		return NULL;
 		
-	SortedListIteratorPtr iterator = (SortedListIteratorPtr) malloc(sizeof(SortedListIteratorPtr));
+	SortedListIteratorPtr iterator = (SortedListIteratorPtr) malloc(sizeof(SortedListIterator));
 	iterator -> list = list;
 	iterator -> curr = list -> head;
 	iterator -> curr -> ref_count++;

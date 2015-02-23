@@ -82,11 +82,11 @@ int main(int argc, char** argv){
 	
 	printf("here");
 	//Instantiate vectors
-	Vector * v1 = (Vector *) malloc(sizeof(Vector *));
-	Vector * v2 = (Vector *) malloc(sizeof(Vector *));
-	Vector * v3 = (Vector *) malloc(sizeof(Vector *));
-	Vector * v4 = (Vector *) malloc(sizeof(Vector *));
-	Vector * v5 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v1 = (Vector *) malloc(sizeof(Vector));
+	Vector * v2 = (Vector *) malloc(sizeof(Vector));
+	Vector * v3 = (Vector *) malloc(sizeof(Vector));
+	Vector * v4 = (Vector *) malloc(sizeof(Vector));
+	Vector * v5 = (Vector *) malloc(sizeof(Vector));
 
 	v1->x = 1; v1->y=3;
 	v2->x = 0; v2->y=3;
@@ -121,7 +121,8 @@ int main(int argc, char** argv){
 	SortedListIteratorPtr vector_iter1 = SLCreateIterator(vector_sl);
 	while(SLGetItem(vector_iter1) != 0){
 		Vector * v = (Vector *) SLNextItem(vector_iter1);
-		printf("x=%d y=%d", v->x, v->y);
+		if (v)
+			printf("x=%d y=%d", v->x, v->y);
 	}
 	printf("here");
 	
