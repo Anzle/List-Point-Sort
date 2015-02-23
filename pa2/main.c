@@ -79,55 +79,73 @@ void int_destroy(void * i){
 }
 
 int main(int argc, char** argv){
-	
-	printf("here");
-	//Instantiate vectors
-	Vector * v1 = (Vector *) malloc(sizeof(Vector));
-	Vector * v2 = (Vector *) malloc(sizeof(Vector));
-	Vector * v3 = (Vector *) malloc(sizeof(Vector));
-	Vector * v4 = (Vector *) malloc(sizeof(Vector));
-	Vector * v5 = (Vector *) malloc(sizeof(Vector));
 
-	v1->x = 1; v1->y=3;
-	v2->x = 0; v2->y=3;
-	v3->x = 3; v3->y=3;
-	v4->x = 2; v4->y=3;
-	v5->x = -6; v5->y=3;
+	//Instantiate vectors
+	Vector * v1 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v2 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v3 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v4 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v5 = (Vector *) malloc(sizeof(Vector *));
+
+	v1->x = 1; v1->y=3; //Fourth in list
+	v2->x = 0; v2->y=3; //Fifth (smallest magnitude)
+	v3->x = 3; v3->y=3; //Second
+	v4->x = 2; v4->y=3; //Third
+	v5->x = -6; v5->y=3; //First (highest magnitude)
 	
 	//Array to hold all the vectors
 	Vector *vectors[] = {v1, v2, v3, v4, v5};
-	
-	printf("here");
+
 	//Define function pointers
 	int (*v_compare_ptr)(void *, void *) = &vector_compare;
 	void (*v_destroy_ptr)(void *) = &vector_destroy;
 	
-	printf("here");
 	//Create Sorted List for Vectors
+	//Vectors will be sorted into the list based on their magnitude
+	//The ordering of the list should be as commented above
 	SortedListPtr vector_sl = SLCreate(v_compare_ptr, v_destroy_ptr);
 	
-	printf("here");
 	//Insert vectors into the list
 	int x;
 	for(x = 0; x < 5; x++) {
 		if(SLInsert(vector_sl, vectors[x]) == 0){
 			printf("Error inserting Vector v%d\n", x);
-			exit(1);
 		}
 	}
 	
-	printf("here");
 	//Create iterator and print out list values
+	printf("\nThe original list:\n");
 	SortedListIteratorPtr vector_iter1 = SLCreateIterator(vector_sl);
-	while(SLGetItem(vector_iter1) != 0){
-		Vector * v = (Vector *) SLNextItem(vector_iter1);
+	while(SLNextItem(vector_iter1) != NULL){
+		Vector * v = (Vector *) SLGetItem(vector_iter1);
 		if (v)
-			printf("x=%d y=%d", v->x, v->y);
+			printf("x=%d y=%d\n", v->x, v->y);
 	}
-	printf("here");
+	
+	
+	SLDestroyIterator(vector_iter1);
+	
+	//Create second iterator to iterate one at a time and delete items as well
+	printf("\n");
+	SortedListIteratorPtr vector_iter2 = SLCreateIterator(vector_sl);
+	SortedListIteratorPtr vector_iter3 = SLCreateIterator(vector_sl);
+	Vector * v = (Vector *) SLGetItem(vector_iter2);
+	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y);
+	if(SLRemove(vector_sl, v3) == 0){
+		printf("Error deleting Vector v3\n");
+	} else {
+		printf("Deleted Vector v3: x=3, y=3\n");
+	}
+	printf("\nThe modified list:\n");
+	while(SLNextItem(vector_iter3) != NULL){
+		Vector * vec = (Vector *) SLGetItem(vector_iter3);
+		if (vec)
+			printf("x=%d y=%d\n", vec->x, vec->y);
+	}
 	
 	SLDestroy(vector_sl);
-	SLDestroyIterator(vector_iter1);
-		
+	SLDestroyIterator(vector_iter2);
+	SLDestroyIterator(vector_iter3);
+	
 	return 0;
 } 
