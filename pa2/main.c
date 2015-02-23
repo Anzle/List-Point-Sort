@@ -125,10 +125,8 @@ int main(int argc, char** argv){
 	}
 	printf("here");
 	
-	
-	
-	
-	
-	
+	SLDestroy(vector_sl);
+	SLDestroyIterator(vector_iter1);
+		
 	return 0;
 } 
