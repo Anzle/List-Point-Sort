@@ -223,9 +223,11 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 
 void SLDestroyIterator(SortedListIteratorPtr iter){
 	//if the current is flagged for deletion and this is it's last pointer, destroy it
-	if(iter->curr->flag == 1 && iter->curr->ref_count == 1){
-		iter->list->destroyer(iter->curr);
-		free(iter->curr);
+	if (iter->curr){
+		if (iter->curr->flag == 1 && iter->curr->ref_count == 1){
+			iter->list->destroyer(iter->curr);
+			free(iter->curr);
+		}
 	}
 	//destroy the iterator
 	free(iter);
@@ -245,7 +247,7 @@ void SLDestroyIterator(SortedListIteratorPtr iter){
 void * SLGetItem( SortedListIteratorPtr iter ){
 	void* ret;
 
-	if(!iter) //valid iterator?
+	if(!iter || !iter->curr) //valid iterator?
 		return 0;
 	
 	if(iter->curr && iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
@@ -258,7 +260,9 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 		iter->curr->ref_count--; //since we will change the pointer
 		
 		iter->curr = iter->curr->next; //advance the iterators position
-		iter->curr->ref_count++; //increase the pointer reference
+		
+		if (iter->curr)
+			iter->curr->ref_count++; //increase the pointer reference
 		return ret;
 	}
 	else //List has been iterated
@@ -282,8 +286,9 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  */
 
 void * SLNextItem(SortedListIteratorPtr iter){
-	if(!iter) //valid iterator?
+	if(!iter || !iter->curr) //valid iterator?
 		return NULL;
+	
 	if(iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
 		SLUpdateIterator(iter);
 	
