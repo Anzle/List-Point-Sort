@@ -30,6 +30,7 @@ typedef struct Vector Vector;
  *		1	if the magnitude of v1 is greater than the magnitude of v2
  */
 int vector_compare(void * v1, void * v2){
+	
 	Vector * vector1 = (Vector *) v1;
 	Vector * vector2 = (Vector *) v2;
 	
@@ -104,6 +105,12 @@ int main(int argc, char** argv){
 	//Vectors will be sorted into the list based on their magnitude
 	//The ordering of the list should be as commented above
 	SortedListPtr vector_sl = SLCreate(v_compare_ptr, v_destroy_ptr);
+	if(vector_sl){
+		printf("\nCreated a Vector List.\n");
+	} else {
+		printf("\nError create a Vector List.");
+		exit(1);
+	}
 	
 	//Insert vectors into the list
 	int x;
@@ -137,7 +144,7 @@ int main(int argc, char** argv){
 	if(SLRemove(vector_sl, v3) == 0){
 		printf("Error deleting Vector v3 (second in list)\n");
 	} else {
-		printf("Deleted Vector v3: x=3, y=3\n");
+		printf("Deleted Vector v3 (second in list): x=3, y=3\n");
 	}
 	v = (Vector *) SLGetItem(vector_iter2);
 	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y);
@@ -219,7 +226,7 @@ int main(int argc, char** argv){
 		SLInsert(vector_sl, v9);
 		
 		printf("\nAdded new vectors to the list.\nThe current state of the list:\n");
-		Vector * v = (Vector *) SLGetItem(vector_iter6);
+		v = (Vector *) SLGetItem(vector_iter6);
 		while(v){
 			if (v){
 				printf("x=%d y=%d\n", v->x, v->y);
@@ -279,6 +286,22 @@ int main(int argc, char** argv){
 			SLDestroyIterator(vector_iterA);
 			SLDestroyIterator(vector_iterB);
 			SLDestroyIterator(vector_iterC);
+			
+			/*//Remove all nodes from the list
+			SortedListIteratorPtr vector_iter7 = SLCreateIterator(vector_sl);			
+			v = (Vector *) SLGetItem(vector_iter7);
+			while(v){
+				if (v){
+					if(SLRemove(vector_sl, v)== 1){
+						printf("Removed vector: x=%d y=%d\n", v->x, v->y);
+					}
+					else {
+						printf("Error removing vector: x=%d y=%d\n", v->x, v->y);
+					}
+				}
+				v = (Vector *) SLNextItem(vector_iter7);
+			}
+			*/
 			
 		} else {
 			printf("Error Creating Iterators.\n");

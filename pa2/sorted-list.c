@@ -230,11 +230,13 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  */
 
 void SLDestroyIterator(SortedListIteratorPtr iter){
-	SLNextItem(iter); //update to prevent memory errors
+	SLGetItem(iter); //update to prevent memory errors
 	//if the current is flagged for deletion and this is it's last pointer, destroy it
 	if (iter->curr){
 		if (iter->curr->flag == 1 && iter->curr->ref_count == 1){
 			iter->list->destroyer(iter->curr);
+			if(iter->curr->next)
+				iter->curr->next->ref_count--;
 			free(iter->curr);
 		}
 	}
@@ -343,13 +345,15 @@ SortedListNodePtr SLSearch(SortedListPtr list, void* data){
  * removed from the list associated with the iterator. 
  */
 void SLUpdateIterator(SortedListIteratorPtr iter){
-		if(iter->curr->flag == 1){ //Update the iterator if needed
+	if(iter->curr->flag == 1){ //Update the iterator if needed
 	
 		SortedListNodePtr temp = SLSearch(iter->list, iter->curr->data); //returns the next valid iterator
 		
 		/*Clean up the old data if needed*/
 		if(iter->curr->ref_count == 1){ //this is the last pointer to it,
 			iter->list->destroyer(iter->curr->data);//delete the data in cur
+			if(iter->curr->next)
+				iter->curr->next->ref_count--;
 			free(iter->curr);
 		}
 		/*Re-establish the Iterator for the general algorithm*/
