@@ -129,23 +129,34 @@ int main(int argc, char** argv){
 	printf("\n");
 	SortedListIteratorPtr vector_iter2 = SLCreateIterator(vector_sl);
 	SortedListIteratorPtr vector_iter3 = SLCreateIterator(vector_sl);
-	Vector * v = (Vector *) SLGetItem(vector_iter2);
+	SLGetItem(vector_iter2);
+	Vector * v = (Vector *) SLNextItem(vector_iter2);
 	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y);
 	if(SLRemove(vector_sl, v3) == 0){
 		printf("Error deleting Vector v3\n");
 	} else {
 		printf("Deleted Vector v3: x=3, y=3\n");
 	}
+	v = (Vector *) SLNextItem(vector_iter2); //w/o this causes err
+	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y); //w/o this causes err
 	printf("\nThe modified list:\n");
 	while(SLNextItem(vector_iter3) != NULL){
 		Vector * vec = (Vector *) SLGetItem(vector_iter3);
 		if (vec)
 			printf("x=%d y=%d\n", vec->x, vec->y);
 	}
-	
-	SLDestroy(vector_sl);
 	SLDestroyIterator(vector_iter2);
 	SLDestroyIterator(vector_iter3);
+	
+	SortedListIteratorPtr vector_iter4 = SLCreateIterator(vector_sl);
+	if(SLRemove(vector_sl, v5) == 0){
+		printf("Error deleting Vector v5\n");
+	} else {
+		printf("Deleted Vector v5 (head): x=-6, y=3\n");
+	}
+	SLDestroyIterator(vector_iter4);
+	
+	SLDestroy(vector_sl);
 	
 	return 0;
 } 

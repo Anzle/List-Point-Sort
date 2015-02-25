@@ -148,7 +148,7 @@ int SLRemove(SortedListPtr list, void *newObj){
 	SortedListNodePtr current = list->head;
 	while(current) {
 		if(list->comparator(current->data, newObj) == 0){
-			if(previous == NULL){
+			if(previous == NULL){ //First node in the list
 				list->head = current->next;
 				
 				if(current -> next != NULL) {
@@ -158,6 +158,7 @@ int SLRemove(SortedListPtr list, void *newObj){
 				current -> ref_count = current -> ref_count - 1;
 				if(current -> ref_count == 0){
 					list->destroyer(current->data);
+					current->next->ref_count--;
 					free(current);
 				}
 				else
@@ -174,6 +175,7 @@ int SLRemove(SortedListPtr list, void *newObj){
 				current -> ref_count = current -> ref_count - 1;
 				if(current -> ref_count == 0){
 					list->destroyer(current->data);
+					current->next->ref_count--;
 					free(current);
 				}
 				else
@@ -222,6 +224,7 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
  */
 
 void SLDestroyIterator(SortedListIteratorPtr iter){
+	SLNextItem(iter); //update to prevent memory errors
 	//if the current is flagged for deletion and this is it's last pointer, destroy it
 	if (iter->curr){
 		if (iter->curr->flag == 1 && iter->curr->ref_count == 1){
