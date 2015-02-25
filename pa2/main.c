@@ -287,7 +287,8 @@ int main(int argc, char** argv){
 			SLDestroyIterator(vector_iterB);
 			SLDestroyIterator(vector_iterC);
 			
-			/*//Remove all nodes from the list
+			//Remove all nodes from the list
+			printf("\n");
 			SortedListIteratorPtr vector_iter7 = SLCreateIterator(vector_sl);			
 			v = (Vector *) SLGetItem(vector_iter7);
 			while(v){
@@ -299,10 +300,10 @@ int main(int argc, char** argv){
 						printf("Error removing vector: x=%d y=%d\n", v->x, v->y);
 					}
 				}
-				v = (Vector *) SLNextItem(vector_iter7);
+				v = (Vector *) SLGetItem(vector_iter7);
 			}
-			*/
-			
+			printf("All the vectors are removed from the list.\n");
+			SLDestroyIterator(vector_iter7);
 		} else {
 			printf("Error Creating Iterators.\n");
 		}
@@ -310,7 +311,6 @@ int main(int argc, char** argv){
 	else {
 		printf("Error inserting new head.\n");
 	}
-	
 	SLDestroy(vector_sl);
 	
 	

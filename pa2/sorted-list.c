@@ -357,7 +357,8 @@ void SLUpdateIterator(SortedListIteratorPtr iter){
 			free(iter->curr);
 		}
 		/*Re-establish the Iterator for the general algorithm*/
-		temp->ref_count++;
+		if(temp)
+			temp->ref_count++;
 		iter->curr = temp;	
 	}
 }

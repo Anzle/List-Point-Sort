@@ -125,7 +125,32 @@ Remove from the List:
 		output:
 			Deleted Vector v3 (second in list): x=3, y=3
 		
-		
+	
+	-Remove all nodes from the list
+		input: We will use an iterator to loop through the list and remove all nodes from it. The list is still not destroyed, but it is now empty.
+			SortedListIteratorPtr vector_iter7 = SLCreateIterator(vector_sl);			
+			v = (Vector *) SLGetItem(vector_iter7);
+			while(v){
+				if (v){
+					if(SLRemove(vector_sl, v)== 1){
+						printf("Removed vector: x=%d y=%d\n", v->x, v->y);
+					}
+					else {
+						printf("Error removing vector: x=%d y=%d\n", v->x, v->y);
+					}
+				}
+				v = (Vector *) SLGetItem(vector_iter7);
+			}
+			printf("All the vectors are removed from the list\n");
+			
+		output:
+			Removed vector: x=15 y=2
+			Removed vector: x=4 y=5
+			Removed vector: x=1 y=3
+			Removed vector: x=0 y=0
+			All the vectors are removed from the list.
+
+	
 Destroy the List:
 	-Destroy a list with data
 		input: The vector list created above with multiple vectors will be passed to SLDestroy(SortedListPtr list)
