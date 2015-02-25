@@ -236,42 +236,6 @@ void SLDestroyIterator(SortedListIteratorPtr iter){
 	free(iter);
 }
 
-/*
- * SLGetItem returns the pointer to the data associated with the
- * SortedListIteratorPtr.  It should return 0 if the iterator
- * advances past the end of the sorted list.
- * 
- * You need to fill in this function as part of your implementation.
- *
- ** if the cur->ref_count == 1, then the current iterator is the only 
- ** thing pointing to it and thus can be deleted with no risk.
-*/
-
-void * SLGetItem( SortedListIteratorPtr iter ){
-	void* ret;
-
-	if(!iter || !iter->curr) //valid iterator?
-		return 0;
-	
-	if(iter->curr && iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
-		SLUpdateIterator(iter);
-	
-	/*General Case*/
-	if(iter->curr){//Still stuff left in the list?
-		ret = iter->curr->data; //set the pointer to return  the data
-		
-		iter->curr->ref_count--; //since we will change the pointer
-		
-		iter->curr = iter->curr->next; //advance the iterators position
-		
-		if (iter->curr)
-			iter->curr->ref_count++; //increase the pointer reference
-		return ret;
-	}
-	else //List has been iterated
-		return 0;
-		
-}
 
 /*
  * SLNextItem returns the pointer to the data associated with the
@@ -287,10 +251,47 @@ void * SLGetItem( SortedListIteratorPtr iter ){
  *
  * You need to fill in this function as part of your implementation.
  */
-
 void * SLNextItem(SortedListIteratorPtr iter){
+	void* ret;
+
 	if(!iter || !iter->curr) //valid iterator?
+		return 0;
+	
+	if(iter->curr && iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
+		SLUpdateIterator(iter);
+	
+	/*General Case*/
+	if(iter->curr){//Still stuff left in the list?
+		
+		iter->curr->ref_count--; //since we will change the pointer
+		iter->curr = iter->curr->next; //advance the iterators position
+		
+		if (iter->curr){
+			iter->curr->ref_count++; //increase the pointer reference
+			return iter->cur->data;
+		}
 		return NULL;
+	}
+	else //List has been iterated
+		return NULL;
+		
+}
+
+
+/*
+ * SLGetItem returns the pointer to the data associated with the
+ * SortedListIteratorPtr.  It should return 0 if the iterator
+ * advances past the end of the sorted list.
+ * 
+ * You need to fill in this function as part of your implementation.
+ *
+ ** if the cur->ref_count == 1, then the current iterator is the only 
+ ** thing pointing to it and thus can be deleted with no risk.
+*/
+
+void * SLGetItem( SortedListIteratorPtr iter ){
+	if(!iter || !iter->curr) //valid iterator?
+		return 0;
 	
 	if(iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
 		SLUpdateIterator(iter);
@@ -300,7 +301,7 @@ void * SLNextItem(SortedListIteratorPtr iter){
 		return ret;
 	}
 	else //List has been iterated
-		return NULL;
+		return 0;
 }
 
 
