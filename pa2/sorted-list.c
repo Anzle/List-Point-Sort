@@ -45,7 +45,7 @@ void SLDestroy(SortedListPtr list){
 		
 	SortedListNodePtr current = list -> head;
 	while(current != NULL) {
-		list -> destroyer(current -> data);
+		list -> destroyer(current -> data); //free any dynamically allocated data
 		SortedListNodePtr temp = current -> next;
 		free(current);
 		current = temp;
@@ -158,7 +158,9 @@ int SLRemove(SortedListPtr list, void *newObj){
 				current -> ref_count = current -> ref_count - 1;
 				if(current -> ref_count == 0){
 					list->destroyer(current->data);
-					current->next->ref_count--;
+					if(current->next){
+						current->next->ref_count--;
+					}
 					free(current);
 				}
 				else
@@ -175,7 +177,9 @@ int SLRemove(SortedListPtr list, void *newObj){
 				current -> ref_count = current -> ref_count - 1;
 				if(current -> ref_count == 0){
 					list->destroyer(current->data);
-					current->next->ref_count--;
+					if(current->next){
+						current->next->ref_count--;
+					}
 					free(current);
 				}
 				else
@@ -210,7 +214,9 @@ SortedListIteratorPtr SLCreateIterator(SortedListPtr list){
 	SortedListIteratorPtr iterator = (SortedListIteratorPtr) malloc(sizeof(SortedListIterator));
 	iterator -> list = list;
 	iterator -> curr = list -> head;
-	iterator -> curr -> ref_count++;
+	if(iterator->curr){
+		iterator -> curr -> ref_count++;
+	}
 	return iterator;
 }
 
@@ -268,7 +274,8 @@ void * SLNextItem(SortedListIteratorPtr iter){
 		
 		if (iter->curr){
 			iter->curr->ref_count++; //increase the pointer reference
-			return iter->cur->data;
+			ret = iter->curr->data; //set the pointer to return the data
+			return ret;
 		}
 		return NULL;
 	}
@@ -293,11 +300,11 @@ void * SLGetItem( SortedListIteratorPtr iter ){
 	if(!iter || !iter->curr) //valid iterator?
 		return 0;
 	
-	if(iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
+	if(iter->curr && iter->curr->flag == 1) //If the current is flagged for deletion, update the iterator
 		SLUpdateIterator(iter);
 	
 	if(iter->curr){//Still stuff left in the list?
-		void * ret = iter->curr->data; //set the pointer to return  the data
+		void * ret = iter->curr->data; //set the pointer to return the data
 		return ret;
 	}
 	else //List has been iterated

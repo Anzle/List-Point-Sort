@@ -116,47 +116,221 @@ int main(int argc, char** argv){
 	//Create iterator and print out list values
 	printf("\nThe original list:\n");
 	SortedListIteratorPtr vector_iter1 = SLCreateIterator(vector_sl);
-	while(SLNextItem(vector_iter1) != NULL){
-		Vector * v = (Vector *) SLGetItem(vector_iter1);
-		if (v)
+	Vector * v = (Vector *) SLGetItem(vector_iter1);
+	while(v){
+		if (v){
 			printf("x=%d y=%d\n", v->x, v->y);
+		}
+		v = (Vector *) SLNextItem(vector_iter1);
 	}
-	
-	
 	SLDestroyIterator(vector_iter1);
 	
-	//Create second iterator to iterate one at a time and delete items as well
+	//Create second iterator to iterate to a node in the middle of a list.
+	//Destroy that node and print value of iterator. 
+	//This value should be updated to point to the next item in the list.
+	//A third iterator is used to run through list and show that it has been modified since it was created.
 	printf("\n");
 	SortedListIteratorPtr vector_iter2 = SLCreateIterator(vector_sl);
 	SortedListIteratorPtr vector_iter3 = SLCreateIterator(vector_sl);
-	SLGetItem(vector_iter2);
-	Vector * v = (Vector *) SLNextItem(vector_iter2);
+	v = (Vector *) SLNextItem(vector_iter2); //move to second node in list
 	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y);
 	if(SLRemove(vector_sl, v3) == 0){
-		printf("Error deleting Vector v3\n");
+		printf("Error deleting Vector v3 (second in list)\n");
 	} else {
 		printf("Deleted Vector v3: x=3, y=3\n");
 	}
-	v = (Vector *) SLNextItem(vector_iter2); //w/o this causes err
-	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y); //w/o this causes err
+	v = (Vector *) SLGetItem(vector_iter2);
+	printf("Iterator 2 value: x=%d, y=%d\n", v->x, v->y);
+	
+	//Print out the modified list
 	printf("\nThe modified list:\n");
-	while(SLNextItem(vector_iter3) != NULL){
-		Vector * vec = (Vector *) SLGetItem(vector_iter3);
-		if (vec)
-			printf("x=%d y=%d\n", vec->x, vec->y);
+	v = (Vector *) SLGetItem(vector_iter3);
+	while(v){
+		if (v){
+			printf("x=%d y=%d\n", v->x, v->y);
+		}	
+		v = (Vector *) SLNextItem(vector_iter3);
 	}
 	SLDestroyIterator(vector_iter2);
 	SLDestroyIterator(vector_iter3);
 	
+	//Create a fourth iterator that points to the head of the list. 
+	//Remove the head of the list as well as the tail of the list. 
+	//Use the iterator to run through the modified list, then destroy it.
 	SortedListIteratorPtr vector_iter4 = SLCreateIterator(vector_sl);
 	if(SLRemove(vector_sl, v5) == 0){
-		printf("Error deleting Vector v5\n");
+		printf("\nError deleting Vector v5\n");
 	} else {
-		printf("Deleted Vector v5 (head): x=-6, y=3\n");
+		printf("\nDeleted Vector v5 (head): x=-6, y=3\n");
+	}
+	if(SLRemove(vector_sl, v2) == 0){
+		printf("Error deleting Vector v2\n");
+	} else {
+		printf("Deleted Vector v2 (tail): x=0, y=3\n");
+	}
+	printf("\nThe modified list:\n");
+	v = (Vector *) SLGetItem(vector_iter4);
+	while(v){
+		if (v){
+			printf("x=%d y=%d\n", v->x, v->y);
+		}	
+		v = (Vector *) SLNextItem(vector_iter4);
 	}
 	SLDestroyIterator(vector_iter4);
 	
+	//Try to remove something not in the list
+	printf("\nTrying to remove v2 again, which is no longer in the list:\n");
+	if(SLRemove(vector_sl, v2) == 0){
+		printf("Error deleting Vector v2\n");
+	} else {
+		printf("Deleted Vector v2 (end): x=0, y=3\n");
+	}
+	
+	//Create more vectors for list in order to run more tests
+	Vector * v6 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v7 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v8 = (Vector *) malloc(sizeof(Vector *));
+	Vector * v9 = (Vector *) malloc(sizeof(Vector *));
+
+	v6->x = 15; v6->y=2; //Will be the new head
+	v7->x = 4; v7->y=5; //Second
+	v8->x = 1; v8->y=4; //Fourth
+	v9->x = 0; v9->y=0; //Tail
+	
+	//Creates an iterator that will point to the initial head of the list
+	//The value of the iterator will not change even if there are nodes inserted
+	//in front of the head.
+	SortedListIteratorPtr vector_iter5 = SLCreateIterator(vector_sl);
+	v = (Vector *) SLGetItem(vector_iter5);
+	printf("\nIterator 5 value (original head): x=%d, y=%d\n", v->x, v->y);
+	if(SLInsert(vector_sl, v6)!=0){
+		printf("Inserted new head into list.\n");
+		
+		//Create new iterator to show that the head of the list has changed
+		SortedListIteratorPtr vector_iter6 = SLCreateIterator(vector_sl);
+		v = (Vector *) SLGetItem(vector_iter5);
+		printf("Iterator 5 value (present from original list): x=%d, y=%d\n", v->x, v->y);
+		v = (Vector *) SLGetItem(vector_iter6);
+		printf("Iterator 6 value (created for new list): x=%d, y=%d\n", v->x, v->y);
+		
+		//Insert other nodes into the list and print out the list using iterator 6
+		SLInsert(vector_sl, v7);
+		SLInsert(vector_sl, v8);
+		SLInsert(vector_sl, v9);
+		
+		printf("\nAdded new vectors to the list.\nThe current state of the list:\n");
+		Vector * v = (Vector *) SLGetItem(vector_iter6);
+		while(v){
+			if (v){
+				printf("x=%d y=%d\n", v->x, v->y);
+			}
+			v = (Vector *) SLNextItem(vector_iter6);
+		}
+		SLDestroyIterator(vector_iter5);
+		SLDestroyIterator(vector_iter6);
+		
+		/*
+		 * Creating three iterators pointing to three different consecutive nodes say A, B, C
+		 * Going to remove nodes B and C 
+		 * SLNextItem() should then return the same node for iterators B and C
+		 */
+		printf("\nCreating three iterators for the same list:\n");
+		SortedListIteratorPtr vector_iterA = SLCreateIterator(vector_sl);
+		SortedListIteratorPtr vector_iterB = SLCreateIterator(vector_sl);
+		SortedListIteratorPtr vector_iterC = SLCreateIterator(vector_sl);
+		if(vector_iterA && vector_iterB && vector_iterC){
+			printf("Created Iterator A.\n");
+			printf("Created Iterator B.\n");
+			printf("Created Iterator C.\n");
+			
+			SLNextItem(vector_iterA); //Points to the second item in the list
+			
+			SLNextItem(vector_iterB);
+			SLNextItem(vector_iterB); //Points to the third item in the list
+			
+			SLNextItem(vector_iterC);
+			SLNextItem(vector_iterC);
+			SLNextItem(vector_iterC); //Points to the fourth item in the list
+			
+			Vector * vA = (Vector *) SLGetItem(vector_iterA);
+			Vector * vB = (Vector *) SLGetItem(vector_iterB);
+			Vector * vC = (Vector *) SLGetItem(vector_iterC);
+			
+			printf("\nIterator A value (node A): x=%d, y=%d\n", vA->x, vA->y);
+			printf("Iterator B value (node B): x=%d, y=%d\n", vB->x, vB->y);
+			printf("Iterator C value (node C): x=%d, y=%d\n", vC->x, vC->y);
+			
+			if(SLRemove(vector_sl, vB) == 1){
+				printf("\nNode B removed from list.\n");
+			}
+			if(SLRemove(vector_sl, vC) == 1){
+				printf("Node C removed from list.\n");
+			}
+			
+			//Values of iterators after deletion
+			vA = (Vector *) SLGetItem(vector_iterA);
+			vB = (Vector *) SLGetItem(vector_iterB);
+			vC = (Vector *) SLGetItem(vector_iterC);
+			printf("\nValues of iterators after deletion:\n");
+			printf("Iterator A value (node A): x=%d, y=%d\n", vA->x, vA->y);
+			printf("Iterator B value (node D): x=%d, y=%d\n", vB->x, vB->y);
+			printf("Iterator C value (node D): x=%d, y=%d\n", vC->x, vC->y);
+			
+			SLDestroyIterator(vector_iterA);
+			SLDestroyIterator(vector_iterB);
+			SLDestroyIterator(vector_iterC);
+			
+		} else {
+			printf("Error Creating Iterators.\n");
+		}
+	}
+	else {
+		printf("Error inserting new head.\n");
+	}
+	
 	SLDestroy(vector_sl);
 	
+	
+	//Create an iterator for empty list using the integers
+	SortedListPtr empty_sl = (SortedListPtr) malloc(sizeof(SortedListPtr));
+	
+	int (*i_compare_ptr)(void *, void *) = &int_compare;
+	void (*i_destroy_ptr)(void *) = &int_destroy;
+	
+	empty_sl = SLCreate(i_compare_ptr, i_destroy_ptr);
+	if(empty_sl){
+		printf("\nCreated a new empty list.\n");
+		SortedListIteratorPtr empty_iter = SLCreateIterator(empty_sl);
+		if(empty_iter){
+			printf("Created an iterator for the empty list.\n");
+			int * intptr = (int *) SLGetItem(empty_iter);
+			if(!intptr){
+				printf("Iterator is pointing to null.\n");
+			}
+			else {
+				printf("Value of iterator: %d", *intptr);
+			}
+		}
+		else{
+			printf("Error creating iterator for empty list.\n");
+		}
+		SLDestroyIterator(empty_iter);
+	}
+	else{
+		printf("Error creating a new empty list.\n");
+	}
+	SLDestroy(empty_sl);
+	
+	// Create a null list and attempt to assign it an iterator
+	SortedListPtr int_sl = NULL;
+	SortedListIteratorPtr int_iter = SLCreateIterator(int_sl);
+	if(int_iter){
+		printf("\nWell, that ain't right. We just created an iterator for a null list.\n");
+		SLDestroyIterator(int_iter);
+	} else{
+		printf("\nError creating iterator for null list.\n");
+	}
+	
+	printf("\nTest Cases Complete.\n\n");
 	return 0;
 } 
